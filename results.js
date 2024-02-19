@@ -1,28 +1,15 @@
-document.getElementById('upload-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    var formData = new FormData();
-    var imageFiles = document.getElementById('image-input').files;
-    for (var i = 0; i < imageFiles.length; i++) {
-        formData.append('images', imageFiles[i]);
-    }
-
-    fetch('http://localhost:3000/upload', {
-        method: 'POST',
-        body: formData
-    })  
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        const resultsContainer = document.getElementById('results');
+document.addEventListener('DOMContentLoaded', () => {
+    const data = JSON.parse(localStorage.getItem('classificationResults'));
+    if (data && data.classifications) {
+        const resultsContainer = document.getElementById('output-container');
         resultsContainer.innerHTML = '';
 
-        data.classifications.forEach(classification => {
+        data.classifications.forEach(classification => { //To display result of image classification
             const imageUrl = classification.imageUrl;
             const objects = classification.objects;
 
             const img = new Image();
-            img.onload = function() {
+            img.onload = function() { //Recreate image in size that fits in webpage
                 const maxWidth = 800; // Max width for the image
                 const maxHeight = 600; // Max height for the image
                 let width = img.width;
@@ -41,17 +28,18 @@ document.getElementById('upload-form').addEventListener('submit', function(e) {
                 }
 
                 const canvas = document.createElement('canvas');
+                canvas.classList.add('result-image');
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
+                ctx.drawImage(img, 0, 0, width, height); //draw image onto canvas
 
-                objects.forEach(obj => {
-                    const vertices = obj.boundingPoly.normalizedVertices;
+                objects.forEach(obj => { //draw box around object and label it
+                    const vertices = obj.boundingPoly.normalizedVertices; //get corners of bounding box
                     ctx.beginPath();
-                    ctx.lineWidth = 4; // Make bounding box thicker
+                    ctx.lineWidth = 4; // Make bounding box thick
                     ctx.strokeStyle = 'yellow'; // Change bounding box color to yellow for visibility
-                    vertices.forEach((v, index) => {
+                    vertices.forEach((v, index) => { //draw box onto image
                         const x = v.x * width;
                         const y = v.y * height;
                         if (index === 0) {
@@ -65,14 +53,13 @@ document.getElementById('upload-form').addEventListener('submit', function(e) {
                     ctx.fillStyle = 'blue'; // Change text color to blue
                     ctx.font = 'bold 18px Arial'; // Increase text sizes
                     ctx.fillText(`${obj.name}: ${obj.confidence}%`, vertices[0].x * width, vertices[0].y * height - 10);
+                    //write name of object and confidence value
                 });
 
-                resultsContainer.appendChild(canvas);
+                resultsContainer.appendChild(canvas); //ready to display new image
             };
             img.src = imageUrl;
         });
-    })
-    .catch(error => {
-        console.error(error);
-    });
+    }
+    localStorage.removeItem('classificationResults');
 });

@@ -1,0 +1,35 @@
+body {
+    background-color: green;
+    color: white;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}
+
+h1 {
+    margin-top: 20px;
+}
+
+.lead {
+    margin-bottom: 20px;
+}
+
+#output-container {
+    margin-top: 20px;
+}
+
+.result-image {
+    display: block; /* Makes the image a block element */
+    max-width: 800px;
+    max-height: 600px;
+    margin: 0 auto; /* Centers the image horizontally */
+    border: 2px solid white; /* Adds a white border around the image */
+}
+
+.btn {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}

@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Upload</title>
+    <title>Image Classification Site</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 <body>
+    <h1>Object Classifer</h1>
+    <p class="lead">Upload Your Image Below</p>
+    <div id="preview-container" class="image-preview-placeholder">
+        Click Select to choose an image.
+    </div>
     <form id="upload-form" enctype="multipart/form-data">
-        <input type="file" id="image-input" name="image" accept="image/png, image/jpeg, image/gif" multiple />
-        <button type="submit">Upload</button>
+        <input type="file" id="image-input" name="image" accept="image/png, image/jpeg, image/gif" multiple hidden />
+        <button type="button" class="btn btn-danger button-select" onclick="document.getElementById('image-input').click();">Select</button>
+        <button type="submit" class="btn btn-primary button-upload">Upload</button>
+
     </form>
 
-    <div id="results" style="position: relative;">
-        <!-- Images and canvases will be appended here -->
-    </div>
-
-    <script src="script.js"></script>
+    <script src="upload.js"></script>
 </body>
 </html>

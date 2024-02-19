@@ -1,0 +1,57 @@
+body {
+    background-color: green;
+    color: white;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}
+
+h1 {
+    margin-top: 20px;
+}
+
+.lead {
+    margin-bottom: 20px;
+}
+
+#preview-container {
+    margin-top: 20px;
+}
+
+.image-preview-placeholder {
+    border: 2px dashed #ccc;
+    background-color: white;
+    color: black;
+    margin: 0 auto;
+    max-width: 800px;
+    height: 450px; /* Set the height to match the max height of the preview image */
+    line-height: 450px; /* Center the text vertically */
+    text-align: center;
+}
+
+/* Style for the image preview */
+.image-preview {
+    display: block; /* Makes the image a block element */
+    max-width: 800px;
+    max-height: 600px;
+    margin: 0 auto; /* Centers the image horizontally */
+    border: 2px solid white; /* Adds a white border around the image */
+}
+
+.btn {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#results {
+    margin-top: 20px;
+    position: relative;
+}
+
+.image-preview {
+    max-width: 100%;
+    height: auto;
+}
