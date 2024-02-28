@@ -3,27 +3,49 @@ const multer = require('multer'); // file uploading
 const { Storage } = require('@google-cloud/storage'); // google cloud storage
 const cors = require('cors'); // cross-origin resource sharing (required to work)
 const { ImageAnnotatorClient } = require('@google-cloud/vision'); // image classification model
+const {SecretManagerServiceClient} = require('@google-cloud/secret-manager'); // service account key
 const app = express();
-const port = 3000; //initialise server to port 3000
+const PORT = process.env.PORT || 3000;
 
 // Enable all CORS requests
-app.use(cors()); // communicate to web pages on different domains
+app.use(cors({origin: 'https://inbound-augury-413219.web.app'})); // communicate to web pages on different domains
 
-// Initialize Google Cloud Storage
-const storage = new Storage({ //google service account key and project ID
-    keyFilename: '/Users/yahya/Documents/Project/inbound-augury-413219-3d23cb789eaf.json',
-    projectId: 'inbound-augury-413219',
-});
-const bucket = storage.bucket('uploaded-images11'); // storage bucket ID
+// Initialize Google Secret Manager
+const secretClient = new SecretManagerServiceClient();
 
-// Initialize Google Cloud Vision
-const visionClient = new ImageAnnotatorClient({ //also uses google service account key
-    keyFilename: '/Users/yahya/Documents/Project/inbound-augury-413219-3d23cb789eaf.json'
-});
+// Define variables at a higher scope
+let storage, bucket, visionClient;
+
+async function initializeApp() {
+    const [version] = await secretClient.accessSecretVersion({
+        name: 'projects/262789808088/secrets/service-account-key/versions/latest',
+    });
+
+    const credentials = JSON.parse(version.payload.data.toString('utf8'));
+
+    // Initialize Google Cloud Storage
+    storage = new Storage({credentials});
+    bucket = storage.bucket('uploaded-images11');
+
+    // Initialize Google Cloud Vision
+    visionClient = new ImageAnnotatorClient({credentials});
+
+}
+
+initializeApp().catch(console.error);
 
 // Configure multer for memory storage
 const upload = multer({
     storage: multer.memoryStorage(),
+});
+
+// Readiness and Liveness Probes
+app.get('/readiness_check', (req, res) => {
+    res.status(200).send('Ready');
+});
+  
+  app.get('/liveness_check', (req, res) => {
+    res.status(200).send('Alive');
 });
 
 app.post('/upload', upload.array('images'), async (req, res) => { //listen for POST requests
@@ -88,8 +110,7 @@ app.post('/upload', upload.array('images'), async (req, res) => { //listen for P
         res.status(500).send('An error occurred during file upload or classification.');
     }
 });
-//message to check if node server is ready
-app.listen(port, () => console.log(`Server listening on port ${port}!`));
 
-//start node server using this command in the terminal:
-// >>> node server.js
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}!`);
+  });

@@ -1,15 +1,35 @@
 body {
-    background-color: green;
+    background-image: url('background.JPEG');
+    background-size: cover; /* Cover the entire page */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Do not repeat the image */
     color: white;
     text-align: center;
     font-family: 'Arial', sans-serif;
 }
 
-h1 {
-    margin-top: 20px;
+.top-bar {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 10px 20px; /* Adjust the padding as needed */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: Adds a slight shadow for depth */
+}
+
+.logo {
+    height: 50px; /* Adjust based on your logo's size */
+    width: auto; /* Keeps the logo's aspect ratio */
+    margin-right: 20px; /* Adds some space between the logo and the title */
+}
+
+.top-bar h1 {
+    margin: 0;
+    font-size: 24px; /* Adjust based on your design */
+    color: #2fad66; /* Adjust the color as needed */
 }
 
 .lead {
+    margin-top: 20px;
     margin-bottom: 20px;
 }
 
@@ -22,7 +42,9 @@ h1 {
     max-width: 800px;
     max-height: 600px;
     margin: 0 auto; /* Centers the image horizontally */
-    border: 2px solid white; /* Adds a white border around the image */
+    /*border: 2px solid white; /* Adds a white border around the image */
+    object-fit: contain; /* Maintain aspect ratio within max dimensions */
+    box-sizing: border-box;
 }
 
 .btn {
