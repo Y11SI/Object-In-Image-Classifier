@@ -14,20 +14,6 @@ document.getElementById('image-input').addEventListener('change', function(e) {
     const carouselInner = document.createElement('div');
     carouselInner.classList.add('carousel-inner');
 
-    // Create indicators if there's more than one image
-    /*if (data.classifications.length > 1) {
-        const indicators = document.createElement('ol');
-        indicators.classList.add('carousel-indicators');
-        data.classifications.forEach((classification, index) => {
-            const indicator = document.createElement('li');
-            indicator.setAttribute('data-bs-target', '#classificationCarousel');
-            indicator.setAttribute('data-bs-slide-to', index);
-            if (index === 0) indicator.classList.add('active');
-            indicators.appendChild(indicator);
-        });
-        carouselContainer.appendChild(indicators);
-    }*/
-
     for (let i = 0; i < files.length; i++) {
         const reader = new FileReader();
         reader.onload = function(event) {
@@ -51,36 +37,51 @@ document.getElementById('image-input').addEventListener('change', function(e) {
     carouselContainer.appendChild(carouselInner);
 
     // Add carousel controls
-    const prevControl = document.createElement('a');
-    prevControl.className = 'carousel-control-prev';
-    prevControl.href = '#carouselExampleControls';
-    prevControl.role = 'button';
-    prevControl.setAttribute('data-bs-slide', 'prev');
-    const prevIcon = document.createElement('span');
-    prevIcon.className = 'carousel-control-prev-icon';
-    prevIcon.setAttribute('aria-hidden', 'true');
-    const prevScreenReader = document.createElement('span');
-    prevScreenReader.className = 'visually-hidden';
-    prevScreenReader.innerText = 'Previous';
-    prevControl.appendChild(prevIcon);
-    prevControl.appendChild(prevScreenReader);
+    if (files.length > 1) {
 
-    const nextControl = document.createElement('a');
-    nextControl.className = 'carousel-control-next';
-    nextControl.href = '#carouselExampleControls';
-    nextControl.role = 'button';
-    nextControl.setAttribute('data-bs-slide', 'next');
-    const nextIcon = document.createElement('span');
-    nextIcon.className = 'carousel-control-next-icon';
-    nextIcon.setAttribute('aria-hidden', 'true');
-    const nextScreenReader = document.createElement('span');
-    nextScreenReader.className = 'visually-hidden';
-    nextScreenReader.innerText = 'Next';
-    nextControl.appendChild(nextIcon);
-    nextControl.appendChild(nextScreenReader);
+        const indicators = document.createElement('ol');
+        indicators.classList.add('carousel-indicators');
+        for (let i = 0; i < files.length; i++) {
+            const indicator = document.createElement('li');
+            indicator.setAttribute('data-bs-target', '#carouselExampleControls');
+            indicator.setAttribute('data-bs-slide-to', i);
+            if (i === 0) indicator.classList.add('active');
+            indicators.appendChild(indicator);
+        }
+        carouselContainer.prepend(indicators);
 
-    carouselContainer.appendChild(prevControl);
-    carouselContainer.appendChild(nextControl);
+        const prevControl = document.createElement('a');
+        prevControl.className = 'carousel-control-prev';
+        prevControl.href = '#carouselExampleControls';
+        prevControl.role = 'button';
+        prevControl.setAttribute('data-bs-slide', 'prev');
+        const prevIcon = document.createElement('span');
+        prevIcon.className = 'carousel-control-prev-icon';
+        prevIcon.setAttribute('aria-hidden', 'true');
+        const prevScreenReader = document.createElement('span');
+        prevScreenReader.className = 'visually-hidden';
+        prevScreenReader.innerText = 'Previous';
+        prevControl.appendChild(prevIcon);
+        prevControl.appendChild(prevScreenReader);
+
+        const nextControl = document.createElement('a');
+        nextControl.className = 'carousel-control-next';
+        nextControl.href = '#carouselExampleControls';
+        nextControl.role = 'button';
+        nextControl.setAttribute('data-bs-slide', 'next');
+        const nextIcon = document.createElement('span');
+        nextIcon.className = 'carousel-control-next-icon';
+        nextIcon.setAttribute('aria-hidden', 'true');
+        const nextScreenReader = document.createElement('span');
+        nextScreenReader.className = 'visually-hidden';
+        nextScreenReader.innerText = 'Next';
+        nextControl.appendChild(nextIcon);
+        nextControl.appendChild(nextScreenReader);
+
+        carouselContainer.appendChild(prevControl);
+        carouselContainer.appendChild(nextControl);
+
+    }
 
     previewContainer.appendChild(carouselContainer);
 });

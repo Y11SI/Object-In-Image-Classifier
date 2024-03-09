@@ -38,13 +38,18 @@ body {
 }
 
 .result-image {
-    display: block; /* Makes the image a block element */
+    display: inline-block; /* Makes the image a block element */
     max-width: 800px;
     max-height: 600px;
     margin: 0 auto; /* Centers the image horizontally */
     /*border: 2px solid white; /* Adds a white border around the image */
     object-fit: contain; /* Maintain aspect ratio within max dimensions */
     box-sizing: border-box;
+}
+
+.carousel-item {
+    justify-content: center; /* Center horizontally for flex items */
+    align-items: center; /* Center vertically if needed */
 }
 
 .btn {

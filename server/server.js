@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Enable all CORS requests
-app.use(cors({origin: 'https://inbound-augury-413219.web.app'})); // communicate to web pages on different domains
+app.use(cors()); // communicate to web pages on different domains
 
 // Initialize Google Secret Manager
 const secretClient = new SecretManagerServiceClient();

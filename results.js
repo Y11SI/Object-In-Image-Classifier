@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const scaledHeight = img.height * scale;
 
                 const canvas = document.createElement('canvas');
-                canvas.classList.add('result-image', 'd-block', 'w-100');
+                canvas.classList.add('result-image');
                 canvas.width = scaledWidth;
                 canvas.height = scaledHeight;
                 canvas.style.border = '2px solid white';
@@ -83,6 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     ctx.fillText(`${obj.name}: ${obj.confidence}%`, vertices[0].x * scaledWidth, vertices[0].y * scaledHeight - 10);
                     //write name of object and confidence value
                 });
+
+                // In order to preserve original image dimensions
+                const canvasWrapper = document.createElement('div');
+                canvasWrapper.style.width = `${scaledWidth}px`;
+                canvasWrapper.style.height = `${scaledHeight}px`;
+                canvasWrapper.appendChild(canvas);
         
                 // Create carousel item
                 const carouselItem = document.createElement('div');
