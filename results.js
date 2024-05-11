@@ -4,23 +4,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const resultsContainer = document.getElementById('output-container');
         resultsContainer.innerHTML = '';
         
-        // Create an element to display latency
+        //display latency in seconds
         const latencyInfo = document.createElement('p');
         latencyInfo.textContent = `Your image was processed in: ${(data.latency / 1000).toFixed(3)} seconds.`;
         resultsContainer.appendChild(latencyInfo);
 
-        // Create carousel container
+        //create carousel container
         const carouselContainer = document.createElement('div');
         carouselContainer.id = 'classificationCarousel';
         carouselContainer.classList.add('carousel', 'slide');
         carouselContainer.setAttribute('data-bs-ride', 'carousel');
 
-        // Create carousel inner container
+        //create carousel inner
         const carouselInner = document.createElement('div');
         carouselInner.classList.add('carousel-inner');
         carouselContainer.appendChild(carouselInner);
 
-        // Create indicators if there's more than one image
+        //create indicators if there is more than one image
         if (data.classifications.length > 1) {
             const indicators = document.createElement('ol');
             indicators.classList.add('carousel-indicators');
@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             carouselContainer.appendChild(indicators);
         }
 
+        //create result images to display
         for (let i = 0; i < data.classifications.length; i++) {
             const classification = data.classifications[i];
             const imageUrl = classification.imageUrl;
@@ -41,56 +42,58 @@ document.addEventListener('DOMContentLoaded', () => {
         
             const img = new Image();
             img.onload = function() {
-                // Maximum display dimensions
+                //maximum image dimensions
                 const maxWidth = 800;
                 const maxHeight = 600;
 
-                // Calculate the scale factor to maintain aspect ratio
+                //calculate the scale to maintain the image's aspect ratio
                 const widthScale = maxWidth / img.width;
                 const heightScale = maxHeight / img.height;
                 const scale = Math.min(widthScale, heightScale);
 
-                // Calculate the scaled dimensions
+                //calculate the scaled dimensions
                 const scaledWidth = img.width * scale;
                 const scaledHeight = img.height * scale;
 
+                //use canvas elements to draw the image with the results overlayed on top
                 const canvas = document.createElement('canvas');
                 canvas.classList.add('result-image');
-                canvas.width = scaledWidth;
+                canvas.width = scaledWidth; //match dimensions with image
                 canvas.height = scaledHeight;
-                canvas.style.border = '2px solid white';
+                canvas.style.border = '2px solid white'; //add white border to image for aesthetics
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight); //draw image onto canvas
 
-                objects.forEach(obj => { //draw box around object and label it
+                //draw box around object and label it
+                objects.forEach(obj => {
                     const vertices = obj.boundingPoly.normalizedVertices; //get corners of bounding box
                     ctx.beginPath();
-                    ctx.lineWidth = 4; // Make bounding box thick
-                    ctx.strokeStyle = 'yellow'; // Change bounding box color to yellow for visibility
+                    ctx.lineWidth = 4; //make bounding box thick
+                    ctx.strokeStyle = 'yellow'; //change bounding box color to yellow for visibility
                     vertices.forEach((v, index) => { //draw box onto image
-                        const x = v.x * scaledWidth;
+                        const x = v.x * scaledWidth; //normalise coordinates to scaled image size
                         const y = v.y * scaledHeight;
                         if (index === 0) {
-                            ctx.moveTo(x, y);
+                            ctx.moveTo(x, y); //start drawing from first vertex
                         } else {
-                            ctx.lineTo(x, y);
+                            ctx.lineTo(x, y); //draw line to next vertex
                         }
                     });
                     ctx.closePath();
                     ctx.stroke();
-                    ctx.fillStyle = 'blue'; // Change text color to blue
-                    ctx.font = 'bold 18px Arial'; // Increase text sizes
+                    ctx.fillStyle = 'blue'; //change text color to blue
+                    ctx.font = 'bold 18px Arial'; //make text strongly visible
                     ctx.fillText(`${obj.name}: ${obj.confidence}%`, vertices[0].x * scaledWidth, vertices[0].y * scaledHeight - 10);
                     //write name of object and confidence value
                 });
 
-                // In order to preserve original image dimensions
+                //create wrapper to ensure image is correctly displayed
                 const canvasWrapper = document.createElement('div');
                 canvasWrapper.style.width = `${scaledWidth}px`;
                 canvasWrapper.style.height = `${scaledHeight}px`;
                 canvasWrapper.appendChild(canvas);
         
-                // Create carousel item
+                //create carousel item for the result image
                 const carouselItem = document.createElement('div');
                 carouselItem.classList.add('carousel-item');
                 if (i === 0) carouselItem.classList.add('active');
@@ -100,10 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
             img.src = imageUrl;
         }
 
-        // Append carousel to results container
+        //append carousel to results container
         resultsContainer.appendChild(carouselContainer);
 
-        // Add carousel controls
+        //add carousel controls
         if (data.classifications.length > 1) {
             const prevControl = document.createElement('a');
             prevControl.classList.add('carousel-control-prev');
@@ -123,5 +126,5 @@ document.addEventListener('DOMContentLoaded', () => {
             carouselContainer.appendChild(nextControl);
         }
     }
-    localStorage.removeItem('classificationResults');
+    localStorage.removeItem('classificationResults'); //clear storage when finished
 });

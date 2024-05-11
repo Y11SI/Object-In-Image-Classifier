@@ -1,10 +1,10 @@
 body {
     background-image: url('background.JPEG');
-    background-size: cover; /* Cover the entire page */
-    background-position: center; /* Center the background image */
-    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover; /*cover the entire page*/
+    background-position: center; /*center the background image*/
+    background-repeat: no-repeat; /*do not repeat the image*/
     color: white;
-    text-align: center;
+    text-align: center; /*center all text*/
     font-family: 'Arial', sans-serif;
 }
 
@@ -12,20 +12,20 @@ body {
     display: flex;
     align-items: center;
     background-color: white;
-    padding: 10px 20px; /* Adjust the padding as needed */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: Adds a slight shadow for depth */
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /*add a slight shadow for depth effect*/
 }
 
 .logo {
-    height: 50px; /* Adjust based on your logo's size */
-    width: auto; /* Keeps the logo's aspect ratio */
-    margin-right: 20px; /* Adds some space between the logo and the title */
+    height: 50px;
+    width: auto; /*keep the logo's aspect ratio*/
+    margin-right: 20px; /*add some space between the logo and the title*/
 }
 
 .top-bar h1 {
     margin: 0;
-    font-size: 24px; /* Adjust based on your design */
-    color: #2fad66; /* Adjust the color as needed */
+    font-size: 24px;
+    color: #2fad66; /*website theme color*/
 }
 
 .lead {
@@ -43,21 +43,20 @@ body {
     color: black;
     margin: 0 auto;
     max-width: 800px;
-    height: 450px; /* Set the height to match the max height of the preview image */
-    line-height: 450px; /* Center the text vertically */
+    height: 450px;
+    line-height: 450px; /*center the text vertically*/
     text-align: center;
 }
 
-/* Style for the image preview */
 .image-preview {
-    display: block; /* Makes the image a block element */
+    display: block;
     max-width: 800px;
     max-height: 600px;
-    margin: 0 auto; /* Centers the image horizontally */
-    border: 2px solid white; /* Adds a white border around the image */
-    object-fit: contain; /* Maintain aspect ratio within max dimensions */
-    height: auto; /* Auto-adjust height to maintain aspect ratio */
-    width: auto; /* Auto-adjust width to maintain aspect ratio */
+    margin: 0 auto; /*centers the image horizontally*/
+    border: 2px solid white; /*add a white border around the image*/
+    object-fit: contain; /*maintain aspect ratio within max dimensions*/
+    height: auto; /*automatically adjust height and width to maintain aspect ratio*/
+    width: auto;
 }
 
 .btn {

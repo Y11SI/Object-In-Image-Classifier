@@ -1,16 +1,16 @@
 document.getElementById('image-input').addEventListener('change', function(e) {
     const files = e.target.files;
-    const previewContainer = document.getElementById('preview-container');
-    previewContainer.innerHTML = ''; // Clear existing content
-    previewContainer.classList.remove('image-preview-placeholder'); // Remove placeholder class
+    const previewContainer = document.getElementById('preview-container'); //create new class for preview image
+    previewContainer.innerHTML = ''; //clear any existing content
+    previewContainer.classList.remove('image-preview-placeholder'); //remove placeholder class after selecting image
 
-    // Create carousel container
+    //create the carousel container
     const carouselContainer = document.createElement('div');
-    carouselContainer.id = 'carouselExampleControls';
+    carouselContainer.id = 'carouselControls';
     carouselContainer.classList.add('carousel', 'slide');
     carouselContainer.setAttribute('data-bs-ride', 'carousel');
 
-    // Create carousel inner
+    //create carousel inner
     const carouselInner = document.createElement('div');
     carouselInner.classList.add('carousel-inner');
 
@@ -19,14 +19,14 @@ document.getElementById('image-input').addEventListener('change', function(e) {
         reader.onload = function(event) {
             const carouselItem = document.createElement('div');
             carouselItem.classList.add('carousel-item');
-            if (i === 0) carouselItem.classList.add('active'); // First item active
+            if (i === 0) carouselItem.classList.add('active'); //first image is shown in preview
 
             const img = document.createElement('img');
             img.src = event.target.result;
             img.classList.add('image-preview');
-            img.style.objectFit = 'contain'; // Maintain aspect ratio within max dimensions
-            img.style.height = 'auto'; // Auto-adjust height to maintain aspect ratio
-            img.style.width = 'auto'; // Auto-adjust width to maintain aspect ratio
+            img.style.objectFit = 'contain';
+            img.style.height = 'auto';
+            img.style.width = 'auto';
 
             carouselItem.appendChild(img);
             carouselInner.appendChild(carouselItem);
@@ -36,14 +36,14 @@ document.getElementById('image-input').addEventListener('change', function(e) {
 
     carouselContainer.appendChild(carouselInner);
 
-    // Add carousel controls
+    //add carousel controls (left and right button + indicators) if there is more than 1 image
     if (files.length > 1) {
 
         const indicators = document.createElement('ol');
         indicators.classList.add('carousel-indicators');
         for (let i = 0; i < files.length; i++) {
             const indicator = document.createElement('li');
-            indicator.setAttribute('data-bs-target', '#carouselExampleControls');
+            indicator.setAttribute('data-bs-target', '#carouselControls');
             indicator.setAttribute('data-bs-slide-to', i);
             if (i === 0) indicator.classList.add('active');
             indicators.appendChild(indicator);
@@ -52,7 +52,7 @@ document.getElementById('image-input').addEventListener('change', function(e) {
 
         const prevControl = document.createElement('a');
         prevControl.className = 'carousel-control-prev';
-        prevControl.href = '#carouselExampleControls';
+        prevControl.href = '#carouselControls';
         prevControl.role = 'button';
         prevControl.setAttribute('data-bs-slide', 'prev');
         const prevIcon = document.createElement('span');
@@ -66,7 +66,7 @@ document.getElementById('image-input').addEventListener('change', function(e) {
 
         const nextControl = document.createElement('a');
         nextControl.className = 'carousel-control-next';
-        nextControl.href = '#carouselExampleControls';
+        nextControl.href = '#carouselControls';
         nextControl.role = 'button';
         nextControl.setAttribute('data-bs-slide', 'next');
         const nextIcon = document.createElement('span');
@@ -89,23 +89,23 @@ document.getElementById('image-input').addEventListener('change', function(e) {
 
 document.getElementById('upload-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    var startTime = Date.now();
+    var startTime = Date.now(); //get timestamp when user submits form
     var formData = new FormData();
     var imageFiles = document.getElementById('image-input').files;
     for (var i = 0; i < imageFiles.length; i++) {
-        formData.append('images', imageFiles[i]);
+        formData.append('images', imageFiles[i]); //add all selected images to form
     }
 
-    fetch('https://inbound-augury-413219.nw.r.appspot.com/upload', {
+    fetch('https://inbound-augury-413219.nw.r.appspot.com/upload', { //URL for google app engine server
         method: 'POST',
         body: formData
     })
     .then(response => response.json())
     .then(data => {
-        var latency = Date.now() - startTime; // Calculate latency
-        data.latency = latency; // Append latency to the data
-        localStorage.setItem('classificationResults', JSON.stringify(data));
-        window.location.href = 'results.html';
+        var latency = Date.now() - startTime; //calculate latency using startTime
+        data.latency = latency; //append latency to the data
+        localStorage.setItem('classificationResults', JSON.stringify(data)); //store data in local storage
+        window.location.href = 'results.html'; //navigate to results page
     })
     .catch(error => {
         console.error(error);

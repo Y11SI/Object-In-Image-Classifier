@@ -1,45 +1,45 @@
-const express = require('express'); // web server framework
-const multer = require('multer'); // file uploading
-const { Storage } = require('@google-cloud/storage'); // google cloud storage
-const cors = require('cors'); // cross-origin resource sharing (required to work)
-const { ImageAnnotatorClient } = require('@google-cloud/vision'); // image classification model
-const {SecretManagerServiceClient} = require('@google-cloud/secret-manager'); // service account key
+const express = require('express'); //web server framework
+const multer = require('multer'); //file uploading
+const { Storage } = require('@google-cloud/storage'); //google cloud storage
+const cors = require('cors'); //cross-origin resource sharing (required to work)
+const { ImageAnnotatorClient } = require('@google-cloud/vision'); //image classification API
+const {SecretManagerServiceClient} = require('@google-cloud/secret-manager'); //service account key
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; //use app engine port or local port
 
-// Enable all CORS requests
-app.use(cors()); // communicate to web pages on different domains
+//enable all CORS requests
+app.use(cors()); //allows us to communicate with web pages on different domains
 
-// Initialize Google Secret Manager
+//initialize Google Secret Manager
 const secretClient = new SecretManagerServiceClient();
 
-// Define variables at a higher scope
+//initialize variables
 let storage, bucket, visionClient;
 
 async function initializeApp() {
     const [version] = await secretClient.accessSecretVersion({
-        name: 'projects/262789808088/secrets/service-account-key/versions/latest',
+        name: 'projects/262789808088/secrets/service-account-key/versions/latest', //refers to securely stored service account key
     });
 
     const credentials = JSON.parse(version.payload.data.toString('utf8'));
 
-    // Initialize Google Cloud Storage
+    //initialize Google Cloud Storage Bucket
     storage = new Storage({credentials});
     bucket = storage.bucket('uploaded-images11');
 
-    // Initialize Google Cloud Vision
+    //initialize Google Cloud Vision
     visionClient = new ImageAnnotatorClient({credentials});
 
 }
 
 initializeApp().catch(console.error);
 
-// Configure multer for memory storage
+//configure multer for memory storage
 const upload = multer({
     storage: multer.memoryStorage(),
 });
 
-// Readiness and Liveness Probes
+//readiness and liveness probes for app engine
 app.get('/readiness_check', (req, res) => {
     res.status(200).send('Ready');
 });
@@ -64,33 +64,34 @@ app.post('/upload', upload.array('images'), async (req, res) => { //listen for P
                     },
                 });
 
-                blobStream.on('error', err => reject(err)); //catch any errors
-                blobStream.on('finish', async () => { // finish upload
-                    // Generate a signed URL for the uploaded file
+                blobStream.on('error', err => reject(err));
+                blobStream.on('finish', async () => { 
+                    //generate a signed URL for the uploaded image file
                     const [url] = await blob.getSignedUrl({
                         version: 'v4',
                         action: 'read',
-                        expires: Date.now() + 15 * 60 * 1000, // URL expires in 15 minutes
+                        expires: Date.now() + 15 * 60 * 1000, //URL expires in 15 minutes
                     });
-                    signedUrl = url; // Capture the signed URL outside promise
+                    signedUrl = url; //save the signed URL
                     resolve(); //upload process is completed
                 });
                 blobStream.end(file.buffer);
             });
 
-            // Ensure signedUrl is defined
+            //make sure signedUrl is defined before proceeding
             if (!signedUrl) {
                 throw new Error('Failed to generate a signed URL');
             }
 
-            const gcsUri = `gs://${bucket.name}/${blob.name}`; //construct URI for image file
-            //perform object localization on the image
+            //construct URI for image file
+            const gcsUri = `gs://${bucket.name}/${blob.name}`;
+            //perform object localization on the image (identify 1 or more objects within image)
             const [localizationResult] = await visionClient.objectLocalization(gcsUri);
-            //get classified objects from google algorithm/model
+            //get classified objects from google classification model
             const objects = localizationResult.localizedObjectAnnotations;
 
             return {
-                imageUrl: signedUrl, // set image URL
+                imageUrl: signedUrl, //set image URL to signedUrl
                 objects: objects.map(obj => ({
                     name: obj.name, // get object(s) name
                     confidence: (obj.score * 100).toFixed(2), //get confidence value of object(s)
@@ -101,7 +102,7 @@ app.post('/upload', upload.array('images'), async (req, res) => { //listen for P
 
         //wait for all promises to resolve and get results
         const classifications = await Promise.all(classificationPromises);
-        res.json({ //send response of success and classifications (or error)
+        res.json({ //sending response of success and classifications (or error)
             message: `Uploaded and classified ${req.files.length} files.`,
             classifications: classifications
         });
@@ -112,5 +113,5 @@ app.post('/upload', upload.array('images'), async (req, res) => { //listen for P
 });
 
 app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}!`);
+    console.log(`Server listening on port ${PORT}!`); //debug message
   });
